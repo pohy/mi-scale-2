@@ -1,14 +1,15 @@
 [Unit]
-Description = Get Xiaomi Mi Smart Scale 2 weight and publish to mqtt
+Description = Get Xiaomi Mi Smart Scale 2 weight, save and access the graph
 After = network.target
 StartLimitIntervalSec = 0
 
 [Service]
-Type = simple
+Type = notify
 Restart = always
 RestartSec = 5
 User = root
-ExecStart = /home/pi/git/mi-scale-2/main.py
+ExecStart = /usr/bin/bash /home/pohy/mi-scale-2/start.sh
 
 [Install]
 WantedBy = multi-user.target
+RequiredBy = network.target

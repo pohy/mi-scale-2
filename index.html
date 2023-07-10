@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Weights</title>
+</head>
+
+<body>
+    <div>
+        <canvas id="myChart"></canvas>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script>
+        const UpdateIntervalFocusedMs = 1000
+        const UpdateIntervalBlurredMs = 30000
+        let updateIntervalMs = UpdateIntervalFocusedMs
+        let timeoutId;
+
+        const ctx = document.getElementById('myChart');
+
+	Chart.register(Chart.Colors)
+        const chart = new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: [],
+                datasets: [makeDataset([])]
+            },
+            options: {
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                },
+		plugins: {
+		    colors: {
+		        enabled: true
+		    },
+		},
+            },
+        });
+
+        window.addEventListener('focus', () => {
+            updateIntervalMs = UpdateIntervalFocusedMs
+            resetPolling();
+        })
+        window.addEventListener('blur', () => {
+            updateIntervalMs = UpdateIntervalBlurredMs
+        })
+
+        resetPolling();
+
+        function resetPolling() {
+            if (timeoutId) {
+                clearTimeout(timeoutId)
+            }
+            tick()
+        }
+
+        function tick() {
+            reloadWeights()
+            timeoutId = setTimeout(tick, updateIntervalMs)
+        }
+
+        function reloadWeights() {
+            fetch('/weights')
+                .then(response => response.json())
+                .then(onWeightsLoaded)
+        }
+
+        let lastWeights = []
+        function onWeightsLoaded(weights) {
+            if (!chart.isDatasetVisible(0)) {
+                return;
+            }
+
+            const weightsDiff = weights.filter(({ timestamp }) => {
+                return !lastWeights.find(({ timestamp: lastTimestamp }) => lastTimestamp === timestamp)
+            })
+            const isDiffInTheFuture = weightsDiff.some(({ timestamp }) => {
+                return timestamp > lastWeights.at(lastWeights.length - 1)?.timestamp ?? 0
+            })
+
+            chart.data.datasets[0].data = weightsToData(weights)
+            chart.data.labels = weightsToLabels(weights)
+            chart.update()
+
+            lastWeights = weights
+        }
+
+        function weightsToLabels(weights) {
+            return weights.map(({ timestamp }) => new Date(timestamp).toLocaleString())
+        }
+
+        function weightsToData(weights) {
+            return weights.map(({ weight }) => weight)
+        }
+
+        function makeDataset(weights) {
+            return {
+                label: 'kg',
+                data: weights.map(({ weight }) => weight),
+                borderWidth: 8
+            }
+        }
+    </script>
+
+</body>
+
+</html>
