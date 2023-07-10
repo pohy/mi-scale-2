@@ -3,6 +3,7 @@ from datetime import datetime
 import json
 import logging
 import os
+import notification
 
 from dotenv import dotenv_values
 
@@ -31,6 +32,7 @@ def start_weight_listener():
         # publisher = MqttPublisher(config)
         # publisher.publish(weight)
         report_weight(weight, "kg")
+        notification.send(weight)
 
     start(config.get("MAC_ADDRESS"), float(config.get("TIMEOUT")), callback)
 
