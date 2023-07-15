@@ -5,14 +5,13 @@ import logging
 import os
 import notification
 
-from dotenv import dotenv_values
+from config import MAC_ADDRESS, TIMEOUT, MIN_WEIGHT, MAX_WEIGHT
 
 from logger import log, basicConfig
 from mqttpublisher import MqttPublisher
 from scanner import start
 
 def start_weight_listener():
-    config = dotenv_values(os.path.dirname(__file__) + "/.env")
     # parser = argparse.ArgumentParser(description="Get Xiaomi Mi Smart Scale 2 weight and publishing to mqtt.",
     #                                  epilog="with <3 by @qbbr")
     # parser.add_argument("--loglevel", dest="logLevel", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
@@ -24,9 +23,9 @@ def start_weight_listener():
 
     def callback(weight, unit):
         log.info("received data = %s %s", weight, unit)
-        if weight < float(config.get("MIN_WEIGHT")) or weight > float(config.get("MAX_WEIGHT")):
-            log.warning("weight is not between %s and %s, skip publishing", config.get("MIN_WEIGHT"),
-                        config.get("MAX_WEIGHT"))
+        if weight < float(MIN_WEIGHT) or weight > float(MAX_WEIGHT):
+            log.warning("weight is not between %s and %s, skip publishing", MIN_WEIGHT,
+                        MAX_WEIGHT)
             return
 
         # publisher = MqttPublisher(config)
@@ -34,7 +33,7 @@ def start_weight_listener():
         report_weight(weight, "kg")
         notification.send(weight)
 
-    start(config.get("MAC_ADDRESS"), float(config.get("TIMEOUT")), callback)
+    start(MAC_ADDRESS, float(TIMEOUT), callback)
 
 def report_weight(weight: float, unit: str):
     """Saves weight to file in JSON format

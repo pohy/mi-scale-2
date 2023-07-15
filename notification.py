@@ -1,12 +1,10 @@
 import os
-from dotenv import dotenv_values
 import requests
 from logger import log
+from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
 
-config = dotenv_values(os.path.dirname(__file__) + "/.env")
-
-token = config.get("TELEGRAM_BOT_TOKEN", None)
-chat_id = config.get("TELEGRAM_CHAT_ID", None)
+token = TELEGRAM_BOT_TOKEN
+chat_id = TELEGRAM_CHAT_ID
 
 def send(weight):
     if token is None or chat_id is None:

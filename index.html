@@ -22,7 +22,7 @@
 
         const ctx = document.getElementById('myChart');
 
-	Chart.register(Chart.Colors)
+        Chart.register(Chart.Colors)
         const chart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -35,11 +35,11 @@
                         beginAtZero: true
                     }
                 },
-		plugins: {
-		    colors: {
-		        enabled: true
-		    },
-		},
+                plugins: {
+                    colors: {
+                        enabled: true
+                    },
+                },
             },
         });
 
@@ -103,7 +103,10 @@
             return {
                 label: 'kg',
                 data: weights.map(({ weight }) => weight),
-                borderWidth: 8
+                borderWidth: 8,
+                fill: false,
+                cubicInterpolationMode: 'monotone',
+                tension: 0.4
             }
         }
     </script>

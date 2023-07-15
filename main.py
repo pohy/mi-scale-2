@@ -18,6 +18,7 @@
 
 # Uses fastapi
 
+from config import MAX_WEIGHT, MIN_WEIGHT
 import uvicorn
 
 
@@ -64,6 +65,9 @@ def get_weights():
             continue
         with open("./data/" + filename) as f:
             data = json.load(f)
+            print("data", data)
+            if data["weight"] < float(MIN_WEIGHT) or data["weight"] > float(MAX_WEIGHT):
+                continue
             weights.append(data)
 
     # Sort by timestamp
@@ -80,10 +84,3 @@ def start_api():
 if __name__ == "__main__":
     start_weight_listener()
     start_api()
-    # with concurrent.futures.ThreadPoolExecutor() as executor:
-    #     futures = [
-    #         executor.submit(start_weight_listener),
-    #         executor.submit(start_api)
-    #     ]
-    #     for future in concurrent.futures.as_completed(futures):
-    #         print(future.result())
