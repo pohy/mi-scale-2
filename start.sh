@@ -9,4 +9,4 @@ fi
 # Start the server
 cd /home/pohy/mi-scale-2
 ./venv/bin/activate
-ENV=production python ./main.py
+ENV=production python ./mi_scale_2/main.py

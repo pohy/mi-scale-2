@@ -7,7 +7,7 @@ token = TELEGRAM_BOT_TOKEN
 chat_id = TELEGRAM_CHAT_ID
 change_trends_days_since_now = [1, 5, 15, 30, 90]
 
-def send(weight):
+def send_notification(weight):
     if token is None or chat_id is None:
         log.warn("telegram token or chat id not set")
         return

@@ -1,7 +1,8 @@
-import os
+from os import path
 from dotenv import dotenv_values
 
-config = dotenv_values(os.path.dirname(__file__) + "/.env")
+config_path = path.join(path.dirname(__file__), "..", ".env")
+config = dotenv_values(config_path)
 
 MAC_ADDRESS = config.get("MAC_ADDRESS", None)
 TIMEOUT = config.get("TIMEOUT", 0.2)

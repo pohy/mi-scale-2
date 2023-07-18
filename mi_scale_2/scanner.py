@@ -52,7 +52,7 @@ class ScanDelegate(DefaultDelegate):
                     self.callback(weight, unit)
 
 
-def start(mac_address, timeout, callback):
+def start_scanning(mac_address, timeout, callback):
     log.info("scanner is starting...")
     scanner = Scanner().withDelegate(ScanDelegate(mac_address, callback))
 

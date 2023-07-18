@@ -1,13 +1,11 @@
 from datetime import datetime
 import json
 import logging
-import notification
 
+from notification import send_notification
 from config import MAC_ADDRESS, TIMEOUT, MIN_WEIGHT, MAX_WEIGHT
-
 from logger import log, basicConfig
-from mqttpublisher import MqttPublisher
-from scanner import start
+from scanner import start_scanning
 
 def start_weight_listener():
     basicConfig(level=getattr(logging, 'DEBUG'))
@@ -20,9 +18,9 @@ def start_weight_listener():
             return
 
         report_weight(weight, "kg")
-        notification.send(weight)
+        send_notification(weight)
 
-    start(MAC_ADDRESS, float(TIMEOUT), callback)
+    start_scanning(MAC_ADDRESS, float(TIMEOUT), callback)
 
 def report_weight(weight: float, unit: str):
     """Saves weight to file in JSON format
