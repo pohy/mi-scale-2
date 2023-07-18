@@ -1,18 +1,11 @@
 # mi-scale-2
 
-[![Stand With Ukraine](https://raw.githubusercontent.com/vshymanskyy/StandWithUkraine/main/badges/StandWithUkraine.svg)](https://github.com/vshymanskyy/StandWithUkraine/blob/main/docs/README.md)
-
-Get Xiaomi Mi Smart Scale 2 weight and publishing to mqtt
+Get Xiaomi Mi Smart Scale 2 weight, notify on telegram, preserve the history and present it using graphs as a webpage
 
 *Tested only on Raspberry Pi 3b + Mi Scale 2*
 
 ## Requirements
-
- * python3
- * python-dotenv
- * bluepy
- * paho-mqtt
- * root permission for `bluepy.btle`
+- root permission for `bluepy.btle`
 
 ```bash
 sudo pip install -r requirements.txt
@@ -25,9 +18,9 @@ always run with `sudo` or from `root`:
 ```bash
 cp .env.dist .env
 vim .env
-sudo ./main.py
-# sudo ./main.py --help
-# sudo ./main.py --loglevel=DEBUG
+sudo ./start.sh
+# sudo ./start.sh --help
+# sudo ./start.sh --loglevel=DEBUG
 ```
 
 ## Autostart
@@ -36,26 +29,6 @@ sudo ./main.py
 sudo cp mi-scale-2.service /etc/systemd/system/
 sudo systemctl enable mi-scale-2
 sudo systemctl start mi-scale-2
-```
-
-## Integrate with Home Assistant
-
-[![qbbr-mi-scale-2-home-assistant-integration](https://i.imgur.com/rRetkYZ.png)](https://i.imgur.com/rRetkYZ.png)
-
-```yaml
-# configuration.yaml:
-mqtt:
-    sensor:
-      - name: "my_weight"
-        state_topic: "miscale/qbbr/weight"
-        force_update: true
-        unit_of_measurement: "kg"
-        state_class: "measurement"
-        icon: mdi:scale
-
-# customize.yaml:
-sensor.my_weight:
-    friendly_name: Мой вес
 ```
 
 ## Help
