@@ -1,30 +1,10 @@
-# HTTP server that exposes files from './data' directory
-
-# GET /weights
-# Returns list of weights in JSON format
-# Example:
-# [
-#   {
-#     "weight": 80.0,
-#     "unit": "kg",
-#     "timestamp": "2020-01-01T00:00:00.000000Z"
-#   },
-#   {
-#     "weight": 78.3,
-#     "unit": "kg",
-#     "timestamp": "2020-01-04T00:00:00.000000Z"
-#   }
-# ]
-
-# Uses fastapi
-
 import os
 
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
-from mi_scale_2.config import MAX_WEIGHT, MIN_WEIGHT
+from mi_scale_2.config import PORT, LOG_LEVEL
 from mi_scale_2.weight import start_weight_listener
 from mi_scale_2.weight_util import get_weights
 
@@ -34,8 +14,7 @@ if not os.path.exists("./data"):
 
 """Starts HTTP server that exposes files from './data' directory"""
 is_production = os.environ.get("ENV", None) == "production"
-port = 80 if is_production else 1337
-app = FastAPI(port = port)
+app = FastAPI()
 
 """GET /weights
 Returns list of weights in JSON format
@@ -63,7 +42,7 @@ def get_index():
     return FileResponse("./index.html")
 
 def start_api():
-    uvicorn.run(app, host="0.0.0.0", port=port, log_level="warning")
+    uvicorn.run(app, host="0.0.0.0", port=PORT, log_level=LOG_LEVEL)
 
 if __name__ == "__main__":
     start_weight_listener()
