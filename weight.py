@@ -1,8 +1,6 @@
-import argparse
 from datetime import datetime
 import json
 import logging
-import os
 import notification
 
 from config import MAC_ADDRESS, TIMEOUT, MIN_WEIGHT, MAX_WEIGHT
@@ -12,13 +10,6 @@ from mqttpublisher import MqttPublisher
 from scanner import start
 
 def start_weight_listener():
-    # parser = argparse.ArgumentParser(description="Get Xiaomi Mi Smart Scale 2 weight and publishing to mqtt.",
-    #                                  epilog="with <3 by @qbbr")
-    # parser.add_argument("--loglevel", dest="logLevel", choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
-    #                     help="set the logging level")
-
-    # args = parser.parse_args()
-    # if args.logLevel:
     basicConfig(level=getattr(logging, 'DEBUG'))
 
     def callback(weight, unit):
@@ -28,8 +19,6 @@ def start_weight_listener():
                         MAX_WEIGHT)
             return
 
-        # publisher = MqttPublisher(config)
-        # publisher.publish(weight)
         report_weight(weight, "kg")
         notification.send(weight)
 

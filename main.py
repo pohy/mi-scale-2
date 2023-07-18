@@ -22,14 +22,13 @@ from config import MAX_WEIGHT, MIN_WEIGHT
 import uvicorn
 
 
-import json
 import os
-from datetime import datetime
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
 from weight import start_weight_listener
+from weight_util import get_weights
 
 # Ensure that data dir exists
 if not os.path.exists("./data"):
@@ -58,21 +57,8 @@ Example:
 ]
 """
 @app.get("/weights")
-def get_weights():
-    weights = []
-    for filename in os.listdir("./data"):
-        if not filename.endswith(".json"):
-            continue
-        with open("./data/" + filename) as f:
-            data = json.load(f)
-            print("data", data)
-            if data["weight"] < float(MIN_WEIGHT) or data["weight"] > float(MAX_WEIGHT):
-                continue
-            weights.append(data)
-
-    # Sort by timestamp
-    weights.sort(key=lambda x: datetime.fromisoformat(x["timestamp"]))
-    return weights
+def _get_weights():
+    return get_weights()
 
 @app.get("/"  )
 def get_index():
