@@ -6,7 +6,7 @@ from mi_scale_2.weight_util import get_change_average, get_change_trend, get_wei
 
 token = TELEGRAM_BOT_TOKEN
 chat_id = TELEGRAM_CHAT_ID
-change_trends_days_since_now = [1, 5, 15, 30, 90]
+change_trends_days_since_now = [7, 14, 30, 90]
 
 def send_notification(weight):
     if token is None or chat_id is None:
@@ -30,9 +30,8 @@ def get_averages_message():
             average = "?"
         else:
             average = round(average, 2)
-        averages.append(f"{day} days: {average}")
-    averages_str = " | ".join(averages)
-    return f"Averages: {averages_str}"
+        averages.append(format_series_entry(day, average))
+    return format_series_message("Average by day", averages)
 
 def get_change_trend_message():
     weights = get_weights()
@@ -47,8 +46,14 @@ def get_change_trend_message():
             is_positive = trend > 0
             trend = round(trend, 2)
             trend = f"+{trend}" if is_positive else trend
-        trends.append(f"{day} days: {trend}")
-    trends_str = " | ".join(trends)
-    return f"Trends: {trends_str}"
+        trends.append(format_series_entry(day, trend))
+    return format_series_message("Trend by day", trends)
+
+def format_series_entry(key, value):
+    return f"{key}: {value}kg"
+
+def format_series_message(msg, series):
+    str = "  |  ".join(series)
+    return f"{msg}:\n{str}"
 
 

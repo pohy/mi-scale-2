@@ -30,14 +30,13 @@ def get_change_trends(days: list[int]) -> list[float]:
         return []
     trends = []
     for day in days:
-        trend = get_change_trend(weights, day)
-        trends.append(f"{day} days: {trend}")
+        trends.append(get_change_trend(weights, day))
     return trends
 
 def get_change_trend(weights, days_until: int):
     weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=days_until))
-    log.error(f"weights since {datetime.now() - timedelta(days=days_until)}: {weights}")
-    log.error(f"first weight: {weights[0]}, last weight: {weights[-1]}")
+    log.info(f"weights since {datetime.now() - timedelta(days=days_until)}: {weights}")
+    log.info(f"first weight: {weights[0]}, last weight: {weights[-1]}")
     weights = [weight["weight"] for weight in weights]
     if len(weights) == 0:
         return None

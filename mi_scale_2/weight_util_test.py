@@ -36,11 +36,11 @@ def test_get_change_average_5_day(weights):
     average = get_change_average(weights, 5)
     assert average == 80
 
-def test_get_chagned_weights_since_1_day(weights):
+def test_get_changed_weights_since_1_day(weights):
     changed_weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=1))
     assert changed_weights == weights[:1]
     
-def test_get_chagned_weights_since_3_days(weights):
+def test_get_changed_weights_since_3_days(weights):
     changed_weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=3))
     assert changed_weights == weights[:3]
     
