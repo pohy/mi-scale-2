@@ -1,7 +1,8 @@
 import requests
-from logger import log
-from config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
-from weight_util import get_change_average, get_change_trend, get_weights
+
+from mi_scale_2.logger import log
+from mi_scale_2.config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
+from mi_scale_2.weight_util import get_change_average, get_change_trend, get_weights
 
 token = TELEGRAM_BOT_TOKEN
 chat_id = TELEGRAM_CHAT_ID

@@ -2,10 +2,10 @@ from datetime import datetime
 import json
 import logging
 
-from notification import send_notification
-from config import MAC_ADDRESS, TIMEOUT, MIN_WEIGHT, MAX_WEIGHT
-from logger import log, basicConfig
-from scanner import start_scanning
+from mi_scale_2.notification import send_notification
+from mi_scale_2.config import MAC_ADDRESS, TIMEOUT, MIN_WEIGHT, MAX_WEIGHT
+from mi_scale_2.logger import log, basicConfig
+from mi_scale_2.scanner import start_scanning
 
 def start_weight_listener():
     basicConfig(level=getattr(logging, 'DEBUG'))

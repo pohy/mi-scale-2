@@ -2,8 +2,8 @@ from datetime import datetime, timedelta
 import json
 import os
 
-from config import MAX_WEIGHT, MIN_WEIGHT
-
+from mi_scale_2.config import MAX_WEIGHT, MIN_WEIGHT
+from mi_scale_2.logger import log
 
 def get_weights():
     weights = []
@@ -35,19 +35,20 @@ def get_change_trends(days: list[int]) -> list[float]:
     return trends
 
 def get_change_trend(weights, days_until: int):
-    weights = get_changed_weights_since(datetime.now() - timedelta(days=days_until))
+    weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=days_until))
+    log.error(f"weights since {datetime.now() - timedelta(days=days_until)}: {weights}")
+    log.error(f"first weight: {weights[0]}, last weight: {weights[-1]}")
     weights = [weight["weight"] for weight in weights]
     if len(weights) == 0:
         return None
     return weights[0] - weights[-1]
 
 def get_change_average(weights, days_until: int):
-    weights = get_changed_weights_since(datetime.now() - timedelta(days=days_until))
+    weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=days_until))
     weights = [weight["weight"] for weight in weights]
     if len(weights) == 0:
         return None
     return sum(weights) / len(weights)
 
-def get_changed_weights_since(date: datetime):
-    weights = get_weights()
+def get_changed_weights_since(weights, date: datetime):
     return [weight for weight in weights if weight["timestamp"] >= date]

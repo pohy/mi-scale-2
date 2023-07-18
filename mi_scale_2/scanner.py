@@ -1,7 +1,7 @@
 import time
 from bluepy.btle import Scanner, DefaultDelegate
 
-from logger import log
+from mi_scale_2.logger import log
 
 scan_frequency_sec = 1/60
 

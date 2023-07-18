@@ -18,17 +18,15 @@
 
 # Uses fastapi
 
-from config import MAX_WEIGHT, MIN_WEIGHT
-import uvicorn
-
-
 import os
 
+import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
-from weight import start_weight_listener
-from weight_util import get_weights
+from mi_scale_2.config import MAX_WEIGHT, MIN_WEIGHT
+from mi_scale_2.weight import start_weight_listener
+from mi_scale_2.weight_util import get_weights
 
 # Ensure that data dir exists
 if not os.path.exists("./data"):

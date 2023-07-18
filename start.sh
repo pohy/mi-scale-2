@@ -7,6 +7,7 @@ then
 fi
 
 # Start the server
+# TODO: I don't think that an absolute path is necessary :)
 cd /home/pohy/mi-scale-2
-./venv/bin/activate
-ENV=production python ./mi_scale_2/main.py
+.venv/bin/activate
+ENV=production python -m mi_scale_2.main
