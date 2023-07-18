@@ -2,7 +2,7 @@
 
 Get Xiaomi Mi Smart Scale 2 weight, notify on telegram, preserve the history and present it using graphs as a webpage
 
-*Tested only on Raspberry Pi 3b + Mi Scale 2*
+*Tested only on Raspberry Pi 2 + Mi Scale 2 + USB Bluetooth dongle*
 
 ## Requirements
 - root permission for `bluepy.btle`
