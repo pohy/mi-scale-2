@@ -2,7 +2,7 @@ import requests
 
 from mi_scale_2.logger import log
 from mi_scale_2.config import TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID
-from mi_scale_2.weight_util import get_change_average, get_change_trend, get_weights
+from mi_scale_2.weight_util import get_change_average, get_change_trend, get_saved_weights
 
 token = TELEGRAM_BOT_TOKEN
 chat_id = TELEGRAM_CHAT_ID
@@ -20,7 +20,7 @@ def send_notification(weight):
     log.debug("sent telegram notification", response)
 
 def get_averages_message():
-    weights = get_weights()
+    weights = get_saved_weights()
     if len(weights) == 0:
         return "No weight data"
     averages = []
@@ -34,7 +34,7 @@ def get_averages_message():
     return format_series_message("Average by day", averages)
 
 def get_change_trend_message():
-    weights = get_weights()
+    weights = get_saved_weights()
     if len(weights) == 0:
         return "No weight data"
     trends = []

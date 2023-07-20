@@ -12,13 +12,13 @@ def start_weight_listener():
 
     def callback(weight, unit):
         log.info("received data = %s %s", weight, unit)
+        send_notification(weight)
         if weight < float(MIN_WEIGHT) or weight > float(MAX_WEIGHT):
             log.warning("weight is not between %s and %s, skip publishing", MIN_WEIGHT,
                         MAX_WEIGHT)
             return
 
         report_weight(weight, "kg")
-        send_notification(weight)
 
     start_scanning(MAC_ADDRESS, float(TIMEOUT), callback)
 

@@ -3,3 +3,11 @@ bluepy
 fastapi
 pytest
 pytest-watch
+
+ipykernel
+notebook
+jupyter
+jupyter_ascending
+jupyterthemes
+jupyterlab-vim
+

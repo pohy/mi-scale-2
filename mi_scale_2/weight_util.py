@@ -2,15 +2,15 @@ from datetime import datetime, timedelta
 import json
 import os
 
-from mi_scale_2.config import MAX_WEIGHT, MIN_WEIGHT
+from mi_scale_2.config import MAX_WEIGHT, MIN_WEIGHT, DATA_DIR
 from mi_scale_2.logger import log
 
-def get_weights():
+def get_saved_weights():
     weights = []
-    for filename in os.listdir("./data"):
+    for filename in os.listdir(DATA_DIR):
         if not filename.endswith(".json"):
             continue
-        with open("./data/" + filename) as f:
+        with open(f"{DATA_DIR}/{filename}", "r") as f:
             data = json.load(f)
             if data["weight"] < float(MIN_WEIGHT) or data["weight"] > float(MAX_WEIGHT):
                 continue
@@ -21,11 +21,11 @@ def get_weights():
     return weights
 
 def get_changed_weights_since(date: datetime):
-    weights = get_weights()
+    weights = get_saved_weights()
     return [weight for weight in weights if weight["timestamp"] >= date]
     
 def get_change_trends(days: list[int]) -> list[float]:
-    weights = get_weights()
+    weights = get_saved_weights()
     if len(weights) == 0:
         return []
     trends = []

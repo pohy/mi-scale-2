@@ -6,7 +6,7 @@ from fastapi.responses import FileResponse
 
 from mi_scale_2.config import PORT, LOG_LEVEL
 from mi_scale_2.weight import start_weight_listener
-from mi_scale_2.weight_util import get_weights
+from mi_scale_2.weight_util import get_saved_weights
 
 # Ensure that data dir exists
 if not os.path.exists("./data"):
@@ -35,7 +35,7 @@ Example:
 """
 @app.get("/weights")
 def _get_weights():
-    return get_weights()
+    return get_saved_weights()
 
 @app.get("/"  )
 def get_index():
