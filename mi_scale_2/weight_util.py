@@ -33,7 +33,7 @@ def get_change_trends(days: list[int]) -> list[float]:
         trends.append(get_change_trend(weights, day))
     return trends
 
-def get_change_trend(weights, days_until: int):
+def get_change_trend(weights, days_until: int) -> float:
     weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=days_until))
     log.info(f"weights since {datetime.now() - timedelta(days=days_until)}: {weights}")
     log.info(f"first weight: {weights[0]}, last weight: {weights[-1]}")
@@ -44,7 +44,15 @@ def get_change_trend(weights, days_until: int):
 
 def get_change_average(weights, days_until: int):
     weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=days_until))
+    # Sort by highest weight
+    weights.sort(key=lambda x: x["weight"], reverse=True)
+    # Keep only the max weight per day
+    weights = {weight["timestamp"].date(): weight for weight in weights}
+    # Convert from dict back to list
+    weights = list(weights.values())
+    # Keep only the weight value
     weights = [weight["weight"] for weight in weights]
+
     if len(weights) == 0:
         return None
     return sum(weights) / len(weights)

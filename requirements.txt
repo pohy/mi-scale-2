@@ -4,6 +4,11 @@ fastapi
 pytest
 pytest-watch
 
+pandas
+numpy
+seaborn
+matplotlib
+
 ipykernel
 notebook
 jupyter
