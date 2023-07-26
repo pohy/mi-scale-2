@@ -1,19 +1,12 @@
-import os
-
 import uvicorn
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
 
 from mi_scale_2.config import PORT, LOG_LEVEL
 from mi_scale_2.weight import start_weight_listener
-from mi_scale_2.weight_util import get_saved_weights
-
-# Ensure that data dir exists
-if not os.path.exists("./data"):
-    os.makedirs("./data")
+from mi_scale_2.weight_util import get_saved_weights, keep_only_daily_highest_weight
 
 """Starts HTTP server that exposes files from './data' directory"""
-is_production = os.environ.get("ENV", None) == "production"
 app = FastAPI()
 
 """GET /weights
@@ -35,11 +28,13 @@ Example:
 """
 @app.get("/weights")
 def _get_weights():
-    return get_saved_weights()
+    weights = get_saved_weights()
+    weights = keep_only_daily_highest_weight(weights)
+    return weights
 
 @app.get("/"  )
 def get_index():
-    return FileResponse("./index.html")
+    return FileResponse("./mi_scale_2/index.html")
 
 def start_api():
     uvicorn.run(app, host="0.0.0.0", port=PORT, log_level=LOG_LEVEL)

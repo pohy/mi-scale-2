@@ -1,10 +1,14 @@
-from os import path
+from os import path, makedirs
 from dotenv import dotenv_values
 
 config_path = path.join(path.dirname(__file__), "..", ".env")
 config = dotenv_values(config_path)
 
 DATA_DIR = config.get("DATA_DIR", path.join(path.dirname(__file__), "..", "data"))
+# Ensure that data dir exists
+if not path.exists(DATA_DIR):
+    makedirs(DATA_DIR)
+
 
 ENV = config.get("ENV", "development")
 IS_PRODUCTION = ENV == "production"

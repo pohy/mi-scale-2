@@ -23,14 +23,20 @@ def send_notification(weight):
 def get_averages_message(weights):
     if len(weights) == 0:
         return "No weight data"
+
     averages = []
+    last_weight = weights[-1]["weight"]
+
     for day in change_trends_days_since_now:
         average = get_change_average(weights, day)
+        sign = "📉" if average < 0 else "📈"
         if average is None:
             average = "?"
         else:
             average = round(average, 2)
+            average = f"{sign}{average}"
         averages.append(format_series_entry(day, average))
+
     return format_series_message("Average by day", averages)
 
 def get_change_trend_message(weights):

@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+set -eu
 
 if [ ${EUID} -ne 0 ]
 then

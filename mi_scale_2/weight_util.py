@@ -33,8 +33,11 @@ def get_change_trends(days: list[int]) -> list[float]:
         trends.append(get_change_trend(weights, day))
     return trends
 
-def get_change_trend(weights, days_until: int) -> float:
+def get_change_trend(_weights, days_until: int) -> float:
+    weights = _weights.copy()
     weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=days_until))
+    weights = keep_only_daily_highest_weight(weights)
+    weights.sort(key=lambda x: x["timestamp"], reverse=True)
     log.info(f"weights since {datetime.now() - timedelta(days=days_until)}: {weights}")
     log.info(f"first weight: {weights[0]}, last weight: {weights[-1]}")
     weights = [weight["weight"] for weight in weights]
@@ -42,14 +45,10 @@ def get_change_trend(weights, days_until: int) -> float:
         return None
     return weights[0] - weights[-1]
 
-def get_change_average(weights, days_until: int):
+def get_change_average(_weights, days_until: int):
+    weights = _weights.copy()
     weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=days_until))
-    # Sort by highest weight
-    weights.sort(key=lambda x: x["weight"], reverse=True)
-    # Keep only the max weight per day
-    weights = {weight["timestamp"].date(): weight for weight in weights}
-    # Convert from dict back to list
-    weights = list(weights.values())
+    weights = keep_only_daily_highest_weight(weights)
     # Keep only the weight value
     weights = [weight["weight"] for weight in weights]
 
@@ -59,3 +58,14 @@ def get_change_average(weights, days_until: int):
 
 def get_changed_weights_since(weights, date: datetime):
     return [weight for weight in weights if weight["timestamp"] >= date]
+
+def keep_only_daily_highest_weight(_weights):
+    # Sort by highest weight
+    weights = _weights.copy()
+    weights.sort(key=lambda x: x["weight"], reverse=True)
+    # Keep only the max weight per day
+    weights = {weight["timestamp"].date(): weight for weight in weights}
+    # Convert from dict back to list
+    weights = list(weights.values())
+    return weights
+
