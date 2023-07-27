@@ -1,5 +1,6 @@
 python-dotenv
 bluepy
+uvicorn
 fastapi
 pytest
 pytest-watch

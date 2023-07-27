@@ -29,6 +29,28 @@ def get_saved_weights_list():
 
     return weights
 
+
+def report_weight(weight: float, unit: str):
+    """Saves weight to file in JSON format
+    Name of the file is current date and time (e.g. 2020-01-01_00-00-00.json)
+
+    Example:
+        {
+            "weight": 80.0,
+            "unit": "kg",
+            "timestamp": "2020-01-01T00:00:00.000000Z"
+        }
+    """
+    data = {
+        "weight": weight,
+        "unit": unit,
+        "timestamp": datetime.now().isoformat()
+    }
+    filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".json"
+    with open(path.join(DATA_DIR, filename), "w") as f:
+        json.dump(data, f)
+    last_loaded_weights.append(data)
+
 def get_change_trends(days: list[int]) -> list[float]:
     weights = get_saved_weights()
     if len(weights) == 0:
@@ -73,6 +95,7 @@ def process_raw_weights(_df: pd.DataFrame) -> pd.DataFrame:
     df["days"] = df["dt"].rsub(pd.Timestamp('today')).dt.days
     df["weeks"] = np.floor(df["days"] / 7).astype(int)
 
+    print("first row", df.iloc[0], "last row", df.iloc[-1])
     df["delta"] = df["weight"].rsub(df["weight"].iloc[0])
     df["trend"] = df["delta"].apply(lambda delta: "Gain" if delta > 0 else "Loss")
 

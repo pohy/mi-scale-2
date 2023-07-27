@@ -30,7 +30,7 @@ Example:
 def _get_weights():
     weights = get_saved_weights()
     weights = keep_only_daily_highest_weight(weights)
-    return weights
+    return weights.to_dict("records")
 
 @app.get("/"  )
 def get_index():
