@@ -1,13 +1,14 @@
 from datetime import datetime, timedelta
-from test.util import make_weights
+from pandas.testing import assert_frame_equal
 import pytest
 
-from mi_scale_2.weight_util import get_change_average, get_change_trend, get_changed_weights_since
+from mi_scale_2.weight_util import get_change_trend, get_changed_weights_since
+from test.util import make_weights
 
 
 @pytest.fixture
 def weights():
-    weight_entries = [60, 70, 80, 90, 100]
+    weight_entries = [60, 65, 70, 75, 80, 85, 90]
     return make_weights(weight_entries)
 
 def test_get_change_trend_returns_float(weights):
@@ -22,32 +23,22 @@ def test_get_change_trend_returns_positive():
 
 def test_get_change_trend_1_day(weights):
     trend = get_change_trend(weights, 1)
-    assert trend == 0
+    assert trend == -5
 
 def test_get_change_trend_3_day(weights):
     trend = get_change_trend(weights, 3)
-    assert trend == -20
+    assert trend == -15
 
 def test_get_change_trend_5_day(weights):
+    print('weigths', weights)
     trend = get_change_trend(weights, 5)
-    assert trend == -40
-
-def test_get_change_average_1_day(weights):
-    average = get_change_average(weights, 1)
-    assert average == 60
-
-def test_get_change_average_3_day(weights):
-    average = get_change_average(weights, 3)
-    assert average == 70
-
-def test_get_change_average_5_day(weights):
-    average = get_change_average(weights, 5)
-    assert average == 80
+    assert trend == -25
 
 def test_get_changed_weights_since_1_day(weights):
-    changed_weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=1))
-    assert changed_weights == weights[:1]
+    changed_weights = get_changed_weights_since(weights, 1)
+    assert_frame_equal(changed_weights, weights[:1])
+
     
 def test_get_changed_weights_since_3_days(weights):
-    changed_weights = get_changed_weights_since(weights, datetime.now() - timedelta(days=3))
-    assert changed_weights == weights[:3]
+    changed_weights = get_changed_weights_since(weights, 3)
+    assert_frame_equal(changed_weights, weights[:3])
