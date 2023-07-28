@@ -47,7 +47,7 @@ def report_weight(weight: float, unit: str):
         "timestamp": datetime.now().isoformat()
     }
     filename = datetime.now().strftime("%Y-%m-%d_%H-%M-%S") + ".json"
-    with open(path.join(DATA_DIR, filename), "w") as f:
+    with open(os.path.join(DATA_DIR, filename), "w") as f:
         json.dump(data, f)
     last_loaded_weights.append(data)
 
@@ -95,7 +95,6 @@ def process_raw_weights(_df: pd.DataFrame) -> pd.DataFrame:
     df["days"] = df["dt"].rsub(pd.Timestamp('today')).dt.days
     df["weeks"] = np.floor(df["days"] / 7).astype(int)
 
-    print("first row", df.iloc[0], "last row", df.iloc[-1])
     df["delta"] = df["weight"].rsub(df["weight"].iloc[0])
     df["trend"] = df["delta"].apply(lambda delta: "Gain" if delta > 0 else "Loss")
 

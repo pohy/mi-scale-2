@@ -13,7 +13,6 @@ def weights():
 
 def test_get_change_trend_returns_float(weights):
     trend = get_change_trend(weights, 1)
-    print(type(trend))
     assert isinstance(trend, float)
 
 def test_get_change_trend_returns_positive():
@@ -30,7 +29,6 @@ def test_get_change_trend_3_day(weights):
     assert trend == -15
 
 def test_get_change_trend_5_day(weights):
-    print('weigths', weights)
     trend = get_change_trend(weights, 5)
     assert trend == -25
 
