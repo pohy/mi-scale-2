@@ -13,6 +13,9 @@
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels/dist/chartjs-plugin-datalabels.js"></script>
+            <script src="https://cdn.jsdelivr.net/npm/hammerjs@2.0.8"></script>
+            <script src="https://cdn.jsdelivr.net/npm/Chart.Zoom.js/src/chart.zoom.js"></script>
 
     <script>
         const UpdateIntervalFocusedMs = 1000
@@ -22,7 +25,14 @@
 
         const ctx = document.getElementById('myChart');
 
+        Chart.defaults.font.size = 18
+        Chart.defaults.elements.point.radius = 8
+        Chart.defaults.elements.point.hitRadius = 12
+        Chart.defaults.elements.point.hoverRadius = 12
+
         Chart.register(Chart.Colors)
+        Chart.register(ChartDataLabels)
+
         const chart = new Chart(ctx, {
             type: 'line',
             data: {
@@ -30,10 +40,15 @@
                 datasets: [makeDataset([])]
             },
             options: {
+                responsive: true,
+                interaction: {
+                    mode: 'index',
+                    intersect: false,
+                },
                 scales: {
                     y: {
-                        beginAtZero: true
-                    }
+                        beginAtZero: false,
+                    },
                 },
                 plugins: {
                     colors: {
@@ -65,8 +80,23 @@
             timeoutId = setTimeout(tick, updateIntervalMs)
         }
 
+        function getQueryString() {
+            const params = new URLSearchParams(window.location.search)
+            const defaultValues = {
+                keep: 'last'
+            }
+            const existingQueryEntries = [...params.entries()]
+            const defaultValuesEntries = Object.entries(defaultValues)
+                .filter(([key]) => !params.has(key))
+            
+            const queryString = [...existingQueryEntries, ...defaultValuesEntries]
+                .map(([key, value]) => `${key}=${value}`).join('&')
+            return queryString
+        }
+
         function reloadWeights() {
-            fetch('/weights')
+            const queryString = getQueryString()
+            fetch(`/weights?${queryString}`)
                 .then(response => response.json())
                 .then(onWeightsLoaded)
         }
@@ -74,7 +104,7 @@
         let lastWeights = []
         function onWeightsLoaded(weights) {
             if (!chart.isDatasetVisible(0)) {
-                return;
+                return
             }
 
             const weightsDiff = weights.filter(({ timestamp }) => {
@@ -92,7 +122,7 @@
         }
 
         function weightsToLabels(weights) {
-            return weights.map(({ timestamp }) => new Date(timestamp).toLocaleString())
+            return weights.map(({ timestamp }) => new Date(timestamp).toLocaleDateString())
         }
 
         function weightsToData(weights) {
@@ -103,10 +133,10 @@
             return {
                 label: 'kg',
                 data: weights.map(({ weight }) => weight),
-                borderWidth: 8,
-                fill: false,
-                cubicInterpolationMode: 'monotone',
-                tension: 0.4
+                borderWidth: 4,
+                fill: true,
+                // cubicInterpolationMode: 'monotone',
+                tension: 0.2,
             }
         }
     </script>

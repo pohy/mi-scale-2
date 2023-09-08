@@ -10,15 +10,16 @@ from mi_scale_2.logger import log
 last_loaded_at = None
 last_loaded_weights = None
 last_loaded_ttl_s = 60
-def get_saved_weights_list():
+def get_saved_weights_list(data_dir=DATA_DIR):
     global last_loaded_at, last_loaded_weights
     if last_loaded_at is not None and (datetime.now() - last_loaded_at).total_seconds() < last_loaded_ttl_s:
         return last_loaded_weights
+
     weights = []
-    for filename in os.listdir(DATA_DIR):
+    for filename in os.listdir(data_dir):
         if not filename.endswith(".json"):
             continue
-        with open(f"{DATA_DIR}/{filename}", "r") as f:
+        with open(f"{data_dir}/{filename}", "r") as f:
             data = json.load(f)
             weights.append(data)
 
@@ -30,7 +31,7 @@ def get_saved_weights_list():
     return weights
 
 
-def report_weight(weight: float, unit: str):
+def report_weight(weight: float, unit: str, data_dir=DATA_DIR):
     """Saves weight to file in JSON format
     Name of the file is current date and time (e.g. 2020-01-01_00-00-00.json)
 
@@ -50,6 +51,7 @@ def report_weight(weight: float, unit: str):
     with open(os.path.join(DATA_DIR, filename), "w") as f:
         json.dump(data, f)
     last_loaded_weights.append(data)
+    return data
 
 def get_change_trends(days: list[int]) -> list[float]:
     weights = get_saved_weights()
@@ -71,11 +73,15 @@ def get_changed_weights_since(weights, days_until: int):
     return weights[weights["days"] <= days_until - 1]
 
 def keep_only_daily_highest_weight(_weights):
-    # Sort by highest weight
+    return keep_only_one_weight_per_day(_weights, keep="last")
+
+def keep_only_daily_lowest_weight(_weights):
+    return keep_only_one_weight_per_day(_weights, keep="first")
+
+def keep_only_one_weight_per_day(_weights, keep):
     weights = _weights.copy()
-    weights = weights.sort_values(by="weight")
-    weights = weights.drop_duplicates("days", keep="last")
     weights = weights.sort_values(by="timestamp")
+    weights = weights.drop_duplicates("days", keep=keep)
     return weights
 
 def get_saved_weights():

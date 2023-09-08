@@ -4,7 +4,7 @@ from fastapi.responses import FileResponse
 
 from mi_scale_2.config import PORT, LOG_LEVEL
 from mi_scale_2.weight import start_weight_listener
-from mi_scale_2.weight_util import get_saved_weights, keep_only_daily_highest_weight
+from mi_scale_2.weight_util import get_saved_weights, keep_only_one_weight_per_day
 
 """Starts HTTP server that exposes files from './data' directory"""
 app = FastAPI()
@@ -27,9 +27,11 @@ Example:
 ]
 """
 @app.get("/weights")
-def _get_weights():
+def _get_weights(keep: str, last_n_days: int = -1):
     weights = get_saved_weights()
-    weights = keep_only_daily_highest_weight(weights)
+    weights = keep_only_one_weight_per_day(weights, keep)
+    if last_n_days > 0:
+        weights = weights[weights["days"] <= last_n_days]
     return weights.to_dict("records")
 
 @app.get("/"  )
