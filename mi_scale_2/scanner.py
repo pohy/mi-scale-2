@@ -1,9 +1,10 @@
 import time
 from bluepy.btle import Scanner, DefaultDelegate
 
+from mi_scale_2.config import SCAN_FREQUENCY_HZ
 from mi_scale_2.logger import log
 
-scan_frequency_sec = 1/60
+scan_frequency_sec = 1/SCAN_FREQUENCY_HZ
 
 
 class ScanDelegate(DefaultDelegate):
@@ -64,10 +65,16 @@ def time_now_ms():
     return int(round(time.time() * 1000))
 
 last_tick = time_now_ms()
-def tick(scanner, timeout):
+notified = False
+def tick(scanner: Scanner, timeout: int):
     global last_tick
+    global notified
 
-    # log.debug(f"scanner is processing... since last_tick: {time_now_ms() - last_tick}ms")
+    if not notified:
+        log.info('First scan!')
+        notified = True
+
+    log.debug(f"scanner is processing... since last_tick: {time_now_ms() - last_tick}ms")
 
     scanner.start()
     scanner.process(timeout)

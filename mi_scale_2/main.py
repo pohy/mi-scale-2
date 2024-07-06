@@ -1,46 +1,28 @@
-import uvicorn
-from fastapi import FastAPI
-from fastapi.responses import FileResponse
+import logging
+from mi_scale_2.logger import basicConfig, log
+from mi_scale_2.config import LOG_LEVEL
 
-from mi_scale_2.config import PORT, LOG_LEVEL
+basicConfig(level=getattr(logging, LOG_LEVEL))
+
+from datetime import datetime
+
+from mi_scale_2.transports.sheet import SheetTransport
+from mi_scale_2.transports.weight_transport import WeightTransport
 from mi_scale_2.weight import start_weight_listener
-from mi_scale_2.weight_util import get_saved_weights, keep_only_one_weight_per_day
 
-"""Starts HTTP server that exposes files from './data' directory"""
-app = FastAPI()
-
-"""GET /weights
-Returns list of weights in JSON format
-Example:
-[
-    {
-        "weight": 80.0,
-        "unit": "kg",
-        "timestamp": "2020-01-01T00:00:00.000000Z"
-    },
-    {
-        
-        "weight": 78.3,
-        "unit": "kg",
-        "timestamp": "2020-01-04T00:00:00.000000Z"
-    }
+transports: list[WeightTransport] = [
+    SheetTransport(),
 ]
-"""
-@app.get("/weights")
-def _get_weights(keep: str, last_n_days: int = -1):
-    weights = get_saved_weights()
-    weights = keep_only_one_weight_per_day(weights, keep)
-    if last_n_days > 0:
-        weights = weights[weights["days"] <= last_n_days]
-    return weights.to_dict("records")
 
-@app.get("/"  )
-def get_index():
-    return FileResponse("./mi_scale_2/index.html")
+def on_measurement(weight: float, unit: str, date: datetime):
+    log.info("on_measurement: %s %s at %s", weight, unit, date)
+    for transport in transports:
+        try:
+            transport.on_measurement(weight, unit, date)
+        except Exception as e:
+            log.error("Failed to publish weight to %s: %s", transport, e)
 
-def start_api():
-    uvicorn.run(app, host="0.0.0.0", port=PORT, log_level=LOG_LEVEL)
 
 if __name__ == "__main__":
-    start_weight_listener()
-    start_api()
+    log.info('Starting weight listener...')
+    start_weight_listener(on_measurement)

@@ -4,11 +4,12 @@ After = network.target
 StartLimitIntervalSec = 0
 
 [Service]
-Type = notify
+Type = simple
 Restart = always
 RestartSec = 5
 User = root
 ExecStart = /usr/bin/bash /home/pohy/mi-scale-2/start.sh
+TimeoutStartSec = 10
 
 [Install]
 WantedBy = multi-user.target

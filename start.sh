@@ -10,6 +10,6 @@ fi
 # Start the server
 # TODO: I don't think that an absolute path is necessary :)
 cd /home/pohy/mi-scale-2
-# source .venv/bin/activate
+source .venv/bin/activate
 # ENV=production .venv/bin/python -m mi_scale_2.main
 ENV=production python -m mi_scale_2.main

@@ -1,17 +1,7 @@
 python-dotenv
 bluepy
-uvicorn
-fastapi
+
 pytest
 pytest-watch
 
-pandas
-numpy
-seaborn
-matplotlib
-
-ipykernel
-notebook
-jupyter
-jupyterthemes
-
+gspread
